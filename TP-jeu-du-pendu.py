@@ -7,37 +7,40 @@
 # 3 - Choisir un mot au hasard
 # 4 - Décomposer le mot en lettres
 # 5 - Demander au joueur de deviner une lettre
-
 import random
 
 listeDeMots = ['pomme', 'voiture', 'chien', 'chat', 'maison', 'ordinateur', 'table', 'chaise', 'fenetre', 'porte']
 
 mot = random.choice(listeDeMots)
-
-lettres = list(mot)
-
 tailleMot = len(mot)
-
-for i in range(tailleMot):
-    lettres[i] = '_'
-
+motCache = ['_'] * tailleMot 
 
 score = 0
 nombreEssais = 0
 
+print(' '.join(motCache))
+
 while score < tailleMot and nombreEssais < 10:  
-    inputLettre = input('Entrez une lettre : ')
+    inputLettre = input('Entrez une lettre : ').lower()
+
     if inputLettre in mot:
-        score += 1
-        nombreEssais += 1
-        nombreEssaisRestant = 10 - nombreEssais
-        print('La lettre est dans le mot, il vous reste ', nombreEssaisRestant, ' essais \n')
+        occurences = 0  
+        for i in range(tailleMot):
+            if mot[i] == inputLettre and motCache[i] == '_':  # Vérifie si la lettre est déjà révélée
+                motCache[i] = inputLettre
+                occurences += 1  
+        
+        score += occurences  
+        print(f'La lettre "{inputLettre}" est dans le mot !\n')
     else:
-        nombreEssais += 1
-        nombreEssaisRestant = 10 - nombreEssais
-        print('La lettre n\'est pas dans le mot, il vous reste ', nombreEssaisRestant, ' essais \n')
+        print(f'La lettre "{inputLettre}" n\'est pas dans le mot.\n')
+    
+    nombreEssais += 1
+    nombreEssaisRestant = 10 - nombreEssais
+    print(f"Mot actuel : {' '.join(motCache)}")
+    print(f"Essais restants : {nombreEssaisRestant}\n")
 
-
-# Lorsqu'une lettre est trouvée, l'afficher dans le mot
-
-
+if score == tailleMot:
+    print(f'Félicitations ! Tu as trouvé le mot : {mot}')
+else:
+    print(f'Perdu ! Le mot était : {mot}')
